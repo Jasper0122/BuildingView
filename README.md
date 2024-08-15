@@ -1,8 +1,20 @@
 
-# BuildingView: Constructing Urban Building Exteriors Database Using Street View Imagery and Multimodal Large Language Models
+
+
+# BuildingView
+
+![BuildingView Workflow](Buildingview.png)
+
+This is the official repository for "BuildingView: Constructing Urban Building Exteriors Database Using Street View Imagery and Multimodal Large Language Models."
+
+**Authors:** [Li Zongrong](https://jasper0122.github.io/), [Su Yunlei](https://suyunlei.github.io/homepage/), Zhu Chenyuan, [Zhao Wufan](https://wufan-zhao.github.io/)¹.
+
+¹*Corresponding author: wufanzhao@hkust-gz.edu.cn*
+
+****
 
 ## Synopsis
-The rapid expansion of geospatial data necessitates efficient and effective methods for searching and mining large data collections. Our project, BuildingView, aims to address this need by developing an automated tool that searches for and annotates urban building data based on city-specific inputs. Utilizing OpenStreetMap (OSM), Google StreetView, and ChatGPT APIs, BuildingView comprehensively constructs an Urban Building Exteriors Database, including building IDs, addresses, heights, coordinates, and detailed exterior descriptions.
+BuildingView is an advanced tool designed to enhance urban analysis by integrating high-resolution visual data from Google Street View with spatial information from OpenStreetMap via the Overpass API. This tool focuses on creating detailed urban building exterior databases, identifying critical indicators for energy efficiency, environmental sustainability, and human-centric design. Through a systematic approach involving literature review, Street View sampling, and annotation using the ChatGPT-4.0 API, BuildingView improves the precision of urban building data. 
 
 ## About this Python Package
 
@@ -47,7 +59,6 @@ This script fetches and saves building data within a specified bounding box usin
 
 **Optional**: To visualize the sampled locations, you can use `map.py` to generate a map with markers.
 ```sh
-python map.py <jsonl_path>
 python map.py "Data/New_York_United_States_1000.jsonl"
 ```
 
@@ -56,7 +67,6 @@ python map.py "Data/New_York_United_States_1000.jsonl"
 **Script**: `StreetView_downloader.py`
 Activate the Google Static Street View API by following the provided link. Use the script to download Google Street View images for the locations specified in a JSONL file.
 ```sh
-python StreetView_downloader.py <jsonl_path> <api_key>
 python StreetView_downloader.py "Data/New_York_United_States_1000.jsonl" "YOUR_API_KEY"
 ```
 The script performs the following tasks:
@@ -70,7 +80,6 @@ The script performs the following tasks:
 **Script**: `image_processing_pipeline.py`
 Activate the OpenAI API by following the provided link. The prompt file contains predefined indicators for Urban Building Exteriors but can be customized.
 ```sh
-python image_processing_pipeline.py <directory> <prompt_file> <api_keys_file>
 python image_processing_pipeline.py "GoogleStreetViewImages/New_York_United_States_1000" "prompt.txt" "openai_api_keys.txt"
 ```
 The script automates the process of downloading images, handling failed downloads, and merging JSONL files. It performs the following tasks:
@@ -83,7 +92,6 @@ The script automates the process of downloading images, handling failed download
 
 **Script**: `export_results.py`
 ```sh
-python export_results.py <input_file_path>
 python export_results.py "result/New_York_United_States_1000.jsonl"
 ```
 This script reads a JSONL file containing geospatial data and exports the data into CSV, Shapefile, and GeoJSON formats. It performs the following tasks:
