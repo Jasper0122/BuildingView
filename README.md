@@ -7,7 +7,7 @@
 
 This is the official repository for "BuildingView: Constructing Urban Building Exteriors Database Using Street View Imagery and Multimodal Large Language Models."
 
-**Authors:** [Zongrong Li](https://jasper0122.github.io/), [Yunlei Su](https://suyunlei.github.io/homepage/), Chenyuan Zhu, [Wufan Zhao](https://wufan-zhao.github.io/)¹.
+**Authors:** [Zongrong Li](https://jasper0122.github.io/), [Yunlei Su](https://suyunlei.github.io/homepage/), Hongrong Wang, [Wufan Zhao](https://wufan-zhao.github.io/)¹.
 
 ¹*Corresponding author: wufanzhao@hkust-gz.edu.cn*
 
