@@ -5,13 +5,18 @@
 
 ![BuildingView Workflow](Buildingview.png)
 
-This is the official repository for "BuildingView: Constructing Urban Building Exteriors Database Using Street View Imagery and Multimodal Large Language Models."
+This is the official repository for "[BuildingView: Constructing Urban Building Exteriors Database Using Street View Imagery and Multimodal Large Language Models](https://arxiv.org/abs/2409.19527)".
 
 **Authors:** [Zongrong Li](https://jasper0122.github.io/), [Yunlei Su](https://suyunlei.github.io/homepage/), Hongrong Wang, [Wufan Zhao](https://wufan-zhao.github.io/)¹.
 
 ¹*Corresponding author: wufanzhao@hkust-gz.edu.cn*
 
 ****
+
+### News
+
+- 📣 Our **BuildingView** paper has been accepted to **ACM SpatialDI 2025**. *(Mar 27, 2025)*
+
 
 ## Synopsis
 BuildingView is an advanced tool designed to enhance urban analysis by integrating high-resolution visual data from Google Street View with spatial information from OpenStreetMap via the Overpass API. This tool focuses on creating detailed urban building exterior databases, identifying critical indicators for energy efficiency, environmental sustainability, and human-centric design. Through a systematic approach involving literature review, Street View sampling, and annotation using the ChatGPT-4.0 API, BuildingView improves the precision of urban building data. 
