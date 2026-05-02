@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use BuildingView, please cite the paper below."
+title: "BuildingView: Constructing Urban Building Exteriors Databases with Street View Imagery and Multimodal Large Language Model"
+authors:
+  - family-names: Li
+    given-names: Zongrong
+  - family-names: Su
+    given-names: Yunlei
+  - family-names: Wang
+    given-names: Hongrong
+  - family-names: Zhao
+    given-names: Wufan
+year: 2026
+doi: 10.1007/978-981-95-3102-8_1
+conference: "Spatial Data and Intelligence (SpatialDI 2025)"
+series: "Lecture Notes in Computer Science"
+volume: "15838"
+repository-code: "https://github.com/Jasper0122/BuildingView"

@@ -1,110 +1,225 @@
-
-
+<div align="center">
 
 # BuildingView
 
-![BuildingView Workflow](Buildingview.png)
+### Constructing Urban Building Exteriors Databases with Street View Imagery and Multimodal Large Language Model
 
-This is the official repository for "[BuildingView: Constructing Urban Building Exteriors Database Using Street View Imagery and Multimodal Large Language Models](https://arxiv.org/abs/2409.19527)".
+[![Paper](https://img.shields.io/badge/Paper-SpatialDI%202025%20%7C%20LNCS%2015838-blue)](https://doi.org/10.1007/978-981-95-3102-8_1)
+[![DOI](https://img.shields.io/badge/DOI-10.1007%2F978--981--95--3102--8__1-green)](https://doi.org/10.1007/978-981-95-3102-8_1)
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](#license)
+[![GitHub stars](https://img.shields.io/github/stars/Jasper0122/BuildingView?style=social)](https://github.com/Jasper0122/BuildingView)
 
-**Authors:** [Zongrong Li](https://jasper0122.github.io/), [Yunlei Su](https://suyunlei.github.io/homepage/), Hongrong Wang, [Wufan Zhao](https://wufan-zhao.github.io/)¹.
+**Official implementation for constructing urban building exterior databases from OpenStreetMap, Google Street View imagery, and GPT-4o-based multimodal annotation.**
 
-¹*Corresponding author: wufanzhao@hkust-gz.edu.cn*
+[Paper](https://doi.org/10.1007/978-981-95-3102-8_1) |
+[Installation](#installation) |
+[Workflow](#workflow) |
+[Usage](#usage) |
+[Citation](#citation)
 
-****
+</div>
 
-### News
+![BuildingView workflow](Buildingview.png)
 
-- 📣 Our **BuildingView** paper has been accepted to **ACM SpatialDI 2025**. *(Mar 27, 2025)*
+## News
 
+- **2025-11-12**: BuildingView first appeared online as a SpatialDI 2025 conference paper in *Lecture Notes in Computer Science*, volume 15838.
+- **2025**: The paper was published in *Spatial Data and Intelligence* by Springer, Singapore.
 
-## Synopsis
-BuildingView is an advanced tool designed to enhance urban analysis by integrating high-resolution visual data from Google Street View with spatial information from OpenStreetMap via the Overpass API. This tool focuses on creating detailed urban building exterior databases, identifying critical indicators for energy efficiency, environmental sustainability, and human-centric design. Through a systematic approach involving literature review, Street View sampling, and annotation using the ChatGPT-4.0 API, BuildingView improves the precision of urban building data. 
+## Overview
 
-## About this Python Package
+Urban building exteriors are important for urban analytics, energy efficiency, environmental sustainability, architectural design, and human-centered planning. However, building exterior information is difficult to collect at scale and is often missing from conventional geospatial datasets.
 
-### 0. Environment Configuration
-First, install the required dependencies listed in `requirements.txt`:
-```sh
+**BuildingView** builds a reproducible workflow for constructing building exterior databases by integrating:
+
+- **OpenStreetMap** building footprints and spatial metadata through the Overpass API
+- **Google Street View** imagery for building-level exterior observation
+- **GPT-4o multimodal annotation** guided by user-defined building exterior prompts
+- **GIS export and mapping** for downstream urban analysis
+
+The repository is aligned with the Springer chapter:
+
+> **BuildingView: Constructing Urban Building Exteriors Databases with Street View Imagery and Multimodal Large Language Model**  
+> Zongrong Li, Yunlei Su, Hongrong Wang, Wufan Zhao  
+> In: *Spatial Data and Intelligence*, SpatialDI 2025, Lecture Notes in Computer Science, vol. 15838, Springer, Singapore  
+> DOI: [10.1007/978-981-95-3102-8_1](https://doi.org/10.1007/978-981-95-3102-8_1)
+
+## Highlights
+
+- **Street-view-based exterior database construction**: Samples building locations and retrieves corresponding Google Street View imagery.
+- **OSM-integrated spatial workflow**: Uses Nominatim and Overpass API to query building footprints, coordinates, addresses, and building attributes.
+- **Prompt-driven GPT-4o annotation**: Supports customized prompts for extracting building exterior indicators from street-view images.
+- **Validated urban case studies**: The paper reports validation using data from New York City, Amsterdam, and Singapore.
+- **GIS-ready outputs**: Exports annotated building records to CSV, GeoJSON, and Shapefile.
+
+## Workflow
+
+```text
+City / country query or bounding box
+  |
+  |-- Retrieve OSM building data             Overpass.py / Overpass_bounding_box.py
+  |
+  |-- Optional sampled-location map          map.py
+  |
+  |-- Download Google Street View images     StreetView_donloader.py
+  |
+  |-- Annotate images with GPT-4o            image_processing_pipeline.py / openai.py
+  |
+  |-- Merge annotations with source records  image_processing_pipeline.py
+  |
+  `-- Export GIS files                       export_results.py
+```
+
+## Repository Structure
+
+```text
+BuildingView/
+|-- Overpass.py                    # Retrieve OSM building data by city and country
+|-- Overpass_bounding_box.py       # Retrieve OSM building data by bounding box
+|-- city_country_matcher.py        # Match city queries to city/country names
+|-- StreetView_donloader.py        # Download Google Street View images
+|-- image_processing_pipeline.py   # Run annotation, retry failures, and merge JSONL files
+|-- openai.py                      # GPT-4o image annotation script
+|-- map.py                         # Generate sampled-location maps
+|-- export_results.py              # Export CSV, GeoJSON, and Shapefile outputs
+|-- Buildingview.png               # Workflow figure
+|-- prompt.txt                     # User-editable annotation prompt
+|-- openai_api_keys.txt            # OpenAI API keys, one per line
+`-- requirements.txt
+```
+
+## Installation
+
+```bash
+git clone https://github.com/Jasper0122/BuildingView
+cd BuildingView
+
+conda create -n buildingview python=3.9 -y
+conda activate buildingview
+
 pip install -r requirements.txt
 ```
 
+## API Configuration
+
+BuildingView requires:
+
+- [Google Street View Static API](https://developers.google.com/maps/documentation/streetview)
+- [OpenAI API](https://platform.openai.com/docs/)
+- Internet access to Nominatim and Overpass API
+
+Place OpenAI API keys in `openai_api_keys.txt`, one key per line:
+
+```text
+sk-...
+sk-...
+```
+
+Edit `prompt.txt` to define the building exterior indicators and output schema you want GPT-4o to extract.
+
+## Usage
+
 ### 1. Retrieve Building Data
 
-#### 1.1 Using City and Country Names
-You can retrieve building data using the city and country names.
+Search candidate city/country names:
 
-**Script**: `city_country_matcher.py`
-```sh
-python city_country_fetcher.py "NY"
+```bash
+python city_country_matcher.py "NY"
 ```
-This script uses the Nominatim API to fetch city names and their corresponding countries based on a query provided through the command line. It outputs a list of cities and their countries that match the query.
 
-**Script**: `Overpass.py`
-```sh
+Retrieve buildings by city and country:
+
+```bash
 python Overpass.py "New York" "United States" 1000
 ```
-This script fetches and saves building data for a specified city and country using the Nominatim and Overpass APIs. It performs the following tasks:
-- Fetch Bounding Box: Retrieves the bounding box coordinates for the given city and country.
-- Fetch Building Data: Queries the Overpass API to get building IDs and coordinates within the bounding box.
-- Fetch Building Details: Obtains additional details like address and height for each building.
-- Save Data: Saves the building data to a JSONL file, categorized by building types.
 
-#### 1.2 Using Bounding Box Coordinates
-You can also retrieve building data by directly inputting bounding box coordinates.
+Retrieve buildings by bounding box:
 
-**Script**: `Overpass_bounding_box.py`
-```sh
+```bash
 python Overpass_bounding_box.py "New York" 1000 40.477399 -74.259090 40.917577 -73.700272
 ```
-This script fetches and saves building data within a specified bounding box using the Overpass API. It performs the following tasks:
-- Fetch Building Data: Retrieves building IDs and coordinates within the given bounding box.
-- Fetch Building Details: Obtains additional details like address and height for each building.
-- Save Data: Saves the building data to a JSONL file.
 
-**Optional**: To visualize the sampled locations, you can use `map.py` to generate a map with markers.
-```sh
+### 2. Visualize Sampled Locations
+
+```bash
 python map.py "Data/New_York_United_States_1000.jsonl"
 ```
 
-### 2. Match Buildings with Street View Exteriors
+### 3. Download Street View Images
 
-**Script**: `StreetView_downloader.py`
-Activate the Google Static Street View API by following the provided link. Use the script to download Google Street View images for the locations specified in a JSONL file.
-```sh
-python StreetView_downloader.py "Data/New_York_United_States_1000.jsonl" "YOUR_API_KEY"
+```bash
+python StreetView_donloader.py "Data/New_York_United_States_1000.jsonl" "YOUR_GOOGLE_API_KEY"
 ```
-The script performs the following tasks:
-- Create Directory: Creates a directory to save the images based on the name of the JSONL file.
-- Read Locations: Reads latitude and longitude coordinates from the JSONL file.
-- Download Images: Uses the Google Street View API to download images for each location.
-- Save Images: Saves the images to the created directory.
 
-### 3. Annotate Urban Building Exteriors
+Images are saved in a directory named after the input JSONL file.
 
-**Script**: `image_processing_pipeline.py`
-Activate the OpenAI API by following the provided link. The prompt file contains predefined indicators for Urban Building Exteriors but can be customized.
-```sh
-python image_processing_pipeline.py "GoogleStreetViewImages/New_York_United_States_1000" "prompt.txt" "openai_api_keys.txt"
+### 4. Annotate Building Exteriors
+
+```bash
+python image_processing_pipeline.py \
+  "GoogleStreetViewImages/New_York_United_States_1000" \
+  "prompt.txt" \
+  "openai_api_keys.txt"
 ```
-The script automates the process of downloading images, handling failed downloads, and merging JSONL files. It performs the following tasks:
-- Run OpenAI Script: Executes an external script (`openai.py`) to download images using given parameters.
-- Read Failed Images: Reads and returns a list of images that failed to download from a log file.
-- Merge JSONL Files: Merges two JSONL files into one, ensuring there are no duplicate records.
-- Read Existing Data: Reads and returns a set of previously processed image IDs from a JSONL file.
 
-### 4. Export Results
+The pipeline:
 
-**Script**: `export_results.py`
-```sh
+- Runs `openai.py` on street-view images
+- Logs failed images
+- Retries failed requests
+- Merges labels back into the source JSONL records
+- Saves merged results under `result/`
+
+### 5. Export Results
+
+```bash
 python export_results.py "result/New_York_United_States_1000.jsonl"
 ```
-This script reads a JSONL file containing geospatial data and exports the data into CSV, Shapefile, and GeoJSON formats. It performs the following tasks:
-- Read JSONL File: Reads the JSONL file and loads the data into a list.
-- Convert to DataFrame: Converts the list of data into a pandas DataFrame.
-- Generate Geometry: Creates a geometry column in the DataFrame using latitude and longitude to represent geographical points.
-- Export Data: Exports the DataFrame to CSV, Shapefile, and GeoJSON formats.
 
----
+The script exports:
 
-By following these steps, you can create a comprehensive database of urban building exteriors using geospatial data, Google Street View images, and large language models. The provided scripts automate the data retrieval, processing, and exporting tasks, making the workflow efficient and effective.
+- CSV
+- GeoJSON
+- Shapefile
+
+## Outputs
+
+BuildingView produces:
+
+- Building-level JSONL records from OSM and Overpass
+- Google Street View image collections
+- GPT-4o building exterior annotations
+- Merged building exterior databases
+- GIS-ready exports for mapping and analysis
+
+## Relationship to BuildingMultiView
+
+BuildingView focuses on **street-view-based building exterior annotation**. The follow-up project [BuildingMultiView](https://github.com/ai4city-hkust/buildingmultiview) extends this idea to multi-perspective imagery by combining satellite house, satellite neighborhood, and street-view branches for multi-scale building characterization.
+
+## Citation
+
+If you find this repository useful, please cite:
+
+```bibtex
+@inproceedings{li2026buildingview,
+  title     = {BuildingView: Constructing Urban Building Exteriors Databases with Street View Imagery and Multimodal Large Language Model},
+  author    = {Li, Zongrong and Su, Yunlei and Wang, Hongrong and Zhao, Wufan},
+  booktitle = {Spatial Data and Intelligence},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {15838},
+  pages     = {1--19},
+  publisher = {Springer},
+  address   = {Singapore},
+  year      = {2026},
+  doi       = {10.1007/978-981-95-3102-8_1}
+}
+```
+
+## Contact
+
+For questions about the code or paper, please contact **Wufan Zhao** at [wufanzhao@hkust-gz.edu.cn](mailto:wufanzhao@hkust-gz.edu.cn).
+
+## License
+
+This project is released under the [MIT License](LICENSE).
